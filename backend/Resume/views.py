@@ -1,158 +1,101 @@
-from django.contrib.auth.models import User
-from resume.models import UserProfile, Template, Resume, ResumeTitle, SummarySnippet, Experience, ExperienceTitle, ExperienceSnippet, Education, Project, ProjectSnippet, Skill, Interest, Award, Language, Certification, Reference, Layout
-from rest_framework import viewsets
+from resume import models, serializers
+from rest_framework.views import APIView
 from rest_framework import permissions
+from rest_framework import status
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from django.shortcuts import get_object_or_404
 from resume.permissions import IsOwner
-from resume.serializers import UserSerializer, UserProfileSerializer, ResumeSerializer, ResumeTitleSerializer, SummarySnippetSerializer, ExperienceSerializer, ExperienceTitleSerializer, ExperienceSnippetSerializer, EducationSerializer, ProjectSerializer, ProjectSnippetSerializer, SkillSerializer, InterestSerializer, AwardSerializer, LanguageSerializer, CertificationSerializer, ReferenceSerializer, LayoutSerializer, TemplateSerializer
+from django.http import JsonResponse
+from django.contrib.sessions.models import Session
+from django.contrib.auth import authenticate, login, logout
+from django.views.decorators.csrf import csrf_exempt
+import json
 
-class UserViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows users to be viewed or edited.
-    """
-    queryset = User.objects.all().order_by('-date_joined')
-    serializer_class = UserSerializer
-    permission_classes = (permissions.IsAuthenticated,)
+@csrf_exempt
+def login_view(request):
+    if request.method == 'POST':
+        body = json.loads(request.body)
+        username = body.get('username')
+        password = body.get('password')
+        
+        # Authenticate the user
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            try:
+                profile = serializers.UserProfileSerializer(models.UserProfile.objects.get(user=user)).data
+            except models.UserProfile.DoesNotExist:
+                profile = None
+            login(request, user)
+            return JsonResponse({'status': 'success', 'session_id': request.session.session_key, 'profile': profile}, status=status.HTTP_200_OK)
+    
+    return JsonResponse({'status': 'failed', 'session_id': None})
 
-class UserProfileViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows user profiles to be viewed or edited.
-    """
-    queryset = UserProfile.objects.all()
-    serializer_class = UserProfileSerializer
-    permission_classes = (permissions.IsAuthenticated, IsOwner)
+@csrf_exempt
+def logout_view(request):
+    if request.method == 'POST':
+        logout(request)
+        return JsonResponse({'status': 'successfoo'})
+    return JsonResponse({'status': 'wrong method'})
 
-class ResumeViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows resumes to be viewed or edited.
-    """
-    queryset = Resume.objects.all()
-    serializer_class = ResumeSerializer
-    permission_classes = (permissions.IsAuthenticated, IsOwner)
+@csrf_exempt
+def restore_session(request):
+    if request.method == 'POST':
+        body = json.loads(request.body)
+        session_id = body.get('session_id')
 
-class ResumeTitleViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows resume titles to be viewed or edited.
-    """
-    queryset = ResumeTitle.objects.all()
-    serializer_class = ResumeTitleSerializer
-    permission_classes = (permissions.IsAuthenticated, IsOwner)
+        try:
+            session = Session.objects.get(session_key=session_id)
+            user_id = session.get_decoded().get('_auth_user_id')
 
-class SummarySnippetViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows summary snippets to be viewed or edited.
-    """
-    queryset = SummarySnippet.objects.all()
-    serializer_class = SummarySnippetSerializer
-    permission_classes = (permissions.IsAuthenticated, IsOwner)
+            user = models.User.objects.get(pk=user_id)
+            
+            login(request, user)
+            return JsonResponse({'status': 'success'})
+        
+        except Session.DoesNotExist:
+            pass
+    return JsonResponse({'status': 'failed'})
 
-class ExperienceViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows experiences to be viewed or edited.
-    """
-    queryset = Experience.objects.all()
-    serializer_class = ExperienceSerializer
-    permission_classes = (permissions.IsAuthenticated, IsOwner)
+@csrf_exempt
+def sign_up(request):
+    if request.method == 'POST':
+        body = json.loads(request.body)
+        print(body)
+        serializer = serializers.UserSerializer(data={'username': body.get('username'), 'email': body.get('username'), 'password': body.get('password')})
+        if serializer.is_valid():
+            print(serializer.validated_data)
+            serializer.save()
+            username = serializer.validated_data['email']
+            password = serializer.validated_data['password']
+            user = authenticate(request, username=username, password=password)
+            login(request, user)
+            return JsonResponse({'status': 'success', 'session_id': request.session.session_key}, status=status.HTTP_201_CREATED)
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class ExperienceTitleViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows experience titles to be viewed or edited.
-    """
-    queryset = ExperienceTitle.objects.all()
-    serializer_class = ExperienceTitleSerializer
-    permission_classes = (permissions.IsAuthenticated,)
 
-class ExperienceSnippetViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows experience snippets to be viewed or edited.
-    """
-    queryset = ExperienceSnippet.objects.all()
-    serializer_class = ExperienceSnippetSerializer
-    permission_classes = (permissions.IsAuthenticated,)
+class UserProfiles(APIView):
+    permission_classes = [IsAuthenticated, IsOwner]
 
-class EducationViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows educations to be viewed or edited.
-    """
-    queryset = Education.objects.all()
-    serializer_class = EducationSerializer
-    permission_classes = (permissions.IsAuthenticated,)
+    def get(self, request, format=None):
+        user = request.user
+        profile = get_object_or_404(models.UserProfile, user=user)
+        serializer = serializers.UserProfileSerializer(profile)
+        return JsonResponse(serializer.data, status=status.HTTP_200_OK)
 
-class ProjectViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows projects to be viewed or edited.
-    """
-    queryset = Project.objects.all()
-    serializer_class = ProjectSerializer
-    permission_classes = (permissions.IsAuthenticated,)
+    def post(self, request, format=None):
+        profile = request.data['profile']
+        profile['user'] = request.user.id
+        serializer = serializers.UserProfileSerializer(data=profile)
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+            return JsonResponse(serializer.data, status=status.HTTP_201_CREATED)
+        return JsonResponse(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class ProjectSnippetViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows project snippets to be viewed or edited.
-    """
-    queryset = ProjectSnippet.objects.all()
-    serializer_class = ProjectSnippetSerializer
-    permission_classes = (permissions.IsAuthenticated,)
+class GetResume(APIView):
+    permission_classes = [IsAuthenticated, IsOwner]
 
-class SkillViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows skills to be viewed or edited.
-    """
-    queryset = Skill.objects.all()
-    serializer_class = SkillSerializer
-    permission_classes = (permissions.IsAuthenticated,)
-
-class InterestViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows interests to be viewed or edited.
-    """
-    queryset = Interest.objects.all()
-    serializer_class = InterestSerializer
-    permission_classes = (permissions.IsAuthenticated,)
-
-class AwardViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows awards to be viewed or edited.
-    """
-    queryset = Award.objects.all()
-    serializer_class = AwardSerializer
-    permission_classes = (permissions.IsAuthenticated,)
-
-class LanguageViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows languages to be viewed or edited.
-    """
-    queryset = Language.objects.all()
-    serializer_class = LanguageSerializer
-    permission_classes = (permissions.IsAuthenticated,)
-
-class CertificationViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows certifications to be viewed or edited.
-    """
-    queryset = Certification.objects.all()
-    serializer_class = CertificationSerializer
-    permission_classes = (permissions.IsAuthenticated,)
-
-class ReferenceViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows references to be viewed or edited.
-    """
-    queryset = Reference.objects.all()
-    serializer_class = ReferenceSerializer
-    permission_classes = (permissions.IsAuthenticated,)
-
-class LayoutViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows layouts to be viewed or edited.
-    """
-    queryset = Layout.objects.all()
-    serializer_class = LayoutSerializer
-    permission_classes = (permissions.IsAuthenticated,)
-
-class TemplateViewSet(viewsets.ModelViewSet):
-    """
-    API endpoint that allows templates to be viewed or edited.
-    """
-    queryset = Template.objects.all()
-    serializer_class = TemplateSerializer
-    permission_classes = (permissions.IsAuthenticated,)
+    def get(self, request, format=None):
+        user = request.user
+        resume = models.Resume.objects.get_or_create(user=user)
+        serializer = serializers.ResumeSerializer(resume[0])
+        return JsonResponse(serializer.data, status=status.HTTP_200_OK)

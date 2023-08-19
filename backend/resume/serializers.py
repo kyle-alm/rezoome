@@ -1,22 +1,28 @@
-from django.contrib.auth.models import User
-from resume.models import UserProfile, Template, Resume, ResumeTitle, SummarySnippet, Experience, ExperienceTitle, ExperienceSnippet, Education, Project, ProjectSnippet, Skill, Interest, Award, Language, Certification, Reference, Layout
+from resume.models import User, UserProfile, Template, Resume, ResumeTitle, SummarySnippet, Experience, ExperienceTitle, ExperienceSnippet, Education, Project, ProjectSnippet, Skill, Interest, Award, Language, Certification, Reference, Layout
 from rest_framework import serializers
-
-class UserSerializer(serializers.ModelSerializer):
-    resume = serializers.PrimaryKeyRelatedField(many=False, queryset=Resume.objects.all())
-    user_profile = serializers.PrimaryKeyRelatedField(many=False, queryset=UserProfile.objects.all())
-
-    class Meta:
-        model = User
-        fields = ('username', 'email', 'resume', 'user_profile')
 
 class UserProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProfile
-        fields = ('id', 'user', 'full_name', 'phone_number', 'address', 'city', 'state', 'zipcode', 'website', 'portfolio', 'github', 'linkedin', 'twitter', 'facebook', 'instagram')
+        fields = ('__all__')
+
+class UserSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+    user_profile = UserProfileSerializer(required=False)
+
+    class Meta:
+        model = User
+        fields = ('__all__')
+
+    def create(self, validated_data):
+        password = validated_data.pop('password')
+        user = User(**validated_data)
+        user.set_password(password)
+        user.save()
+        return user
 
 class ResumeSerializer(serializers.ModelSerializer):
-    titles = serializers.PrimaryKeyRelatedField(many=True, queryset=ResumeTitle.objects.all())
+    resume_titles = serializers.PrimaryKeyRelatedField(many=True, queryset=ResumeTitle.objects.all())
     summary_snippets = serializers.PrimaryKeyRelatedField(many=True, queryset=SummarySnippet.objects.all())
     experience_items = serializers.PrimaryKeyRelatedField(many=True, queryset=Experience.objects.all())
     education_items = serializers.PrimaryKeyRelatedField(many=True, queryset=Education.objects.all())
@@ -29,19 +35,20 @@ class ResumeSerializer(serializers.ModelSerializer):
     references = serializers.PrimaryKeyRelatedField(many=True, queryset=Reference.objects.all())
     layouts = serializers.PrimaryKeyRelatedField(many=True, queryset=Layout.objects.all())
 
+
     class Meta:
         model = Resume
-        fields = ('id', 'user', 'titles', 'summary_snippets', 'experience_items', 'education_items', 'projects', 'skills', 'interests', 'awards', 'languages', 'certifications', 'references', 'layouts')
+        fields = ('__all__')
 
 class ResumeTitleSerializer(serializers.ModelSerializer):
     class Meta:
         model = ResumeTitle
-        fields = ('id', 'resume', 'title')
+        fields = ('__all__')
 
 class SummarySnippetSerializer(serializers.ModelSerializer):
     class Meta:
         model = SummarySnippet
-        fields = ('id', 'resume', 'snippet')
+        fields = ('__all__')
 
 class ExperienceSerializer(serializers.ModelSerializer):
     experience_titles = serializers.PrimaryKeyRelatedField(many=True, queryset=ExperienceTitle.objects.all())
@@ -49,71 +56,71 @@ class ExperienceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Experience
-        fields = ('id', 'resume', 'company', 'city', 'state', 'start_date', 'end_date', 'is_current', 'experience_titles', 'experience_snippets')
+        fields = ('__all__')
 
 class ExperienceTitleSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExperienceTitle
-        fields = ('id', 'experience', 'title')
+        fields = ('__all__')
 
 class ExperienceSnippetSerializer(serializers.ModelSerializer):
     class Meta:
         model = ExperienceSnippet
-        fields = ('id', 'experience', 'snippet')
+        fields = ('__all__')
 
 class EducationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Education
-        fields = ('id', 'resume', 'school', 'city', 'state', 'start_date', 'end_date', 'is_current', 'degree_type', 'degree_field', 'gpa')
+        fields = ('__all__')
 
 class ProjectSerializer(serializers.ModelSerializer):
     project_snippets = serializers.PrimaryKeyRelatedField(many=True, queryset=ProjectSnippet.objects.all())
 
     class Meta:
         model = Project
-        fields = ('id', 'resume', 'name', 'start_date', 'end_date', 'url', 'role', 'project_snippets')
+        fields = ('__all__')
 
 class ProjectSnippetSerializer(serializers.ModelSerializer):
     class Meta:
         model = ProjectSnippet
-        fields = ('id', 'project', 'snippet')
+        fields = ('__all__')
 
 class SkillSerializer(serializers.ModelSerializer):
     class Meta:
         model = Skill
-        fields = ('id', 'resume', 'name')
+        fields = ('__all__')
 
 class InterestSerializer(serializers.ModelSerializer):
     class Meta:
         model = Interest
-        fields = ('id', 'resume', 'name')
+        fields = ('__all__')
 
 class AwardSerializer(serializers.ModelSerializer):
     class Meta:
         model = Award
-        fields = ('id', 'resume', 'name', 'date')
+        fields = ('__all__')
 
 class LanguageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Language
-        fields = ('id', 'resume', 'name', 'proficiency')
+        fields = ('__all__')
 
 class CertificationSerializer(serializers.ModelSerializer):
     class Meta:
         model = Certification
-        fields = ('id', 'resume', 'name', 'details', 'date')
+        fields = ('__all__')
 
 class ReferenceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Reference
-        fields = ('id', 'resume', 'name', 'title', 'company', 'phone_number', 'email', 'relationship')
+        fields = ('__all__')
 
 class LayoutSerializer(serializers.ModelSerializer):
     class Meta:
         model = Layout
-        fields = ('id', 'resume', 'template', 'primary_color', 'secondary_color')
+        fields = ('__all__')
 
 class TemplateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Template
-        fields = ('id', 'name', 'description', 'image_url', 'html_url', 'css_url', 'js_url', 'is_active')
+        fields = ('__all__')

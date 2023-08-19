@@ -10,6 +10,7 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 
+from corsheaders.defaults import default_headers
 from pathlib import Path
 import os
 
@@ -26,8 +27,21 @@ SECRET_KEY = 'django-insecure-it5omj2e47yt%w$8&q%d=7(f91nf)n2=0l@^#x%f34k^m5%kq3
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 
+CSRF_TRUSTED_ORIGINS = [
+    'https://*.mydomain.com',
+    'https://*.127.0.0.1', 
+    'http://localhost:3000',
+    'http://localhost:8000',
+    'https://localhost:3000',
+    'https://localhost:8000',
+    'http://127.0.0.1:3000',
+    'http://127.0.0.1:8000',
+    'https://127.0.0.1:3000',
+    'https://127.0.0.1:8000',
+    # Other trusted origins
+]
 
 # Application definition
 
@@ -45,8 +59,8 @@ INSTALLED_APPS = [
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'django.middleware.common.CommonMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
@@ -146,3 +160,10 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = 'resume.User'
+
+SESSION_EXPIRE_AT_BROWSER_CLOSE = False
+SESSION_COOKIE_AGE = 60 * 60 * 24 * 4
+SESSION_COOKIE_SECURE = True  # Set it to True for secure HTTPS connections
+SESSION_COOKIE_SAMESITE = 'Strict'  # Set the SameSite attribute for the session cookie

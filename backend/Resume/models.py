@@ -1,21 +1,31 @@
 from django.db import models
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AbstractUser
+from .managers import CustomUserManager
+
+class User(AbstractUser):
+    USERNAME_FIELD = 'email'
+    REQUIRED_FIELDS = []
+
+    email = models.EmailField(unique=True)
+
+    objects = CustomUserManager()
+
 
 class UserProfile(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField('resume.User', on_delete=models.CASCADE)
     full_name = models.CharField(max_length=255)
     phone_number = models.CharField(max_length=20, blank=True)
     address = models.CharField(max_length=255, blank=True)
     city = models.CharField(max_length=255)
     state = models.CharField(max_length=255)
     zipcode = models.CharField(max_length=10, blank=True)
-    website = models.CharField(max_length=255, blank=True)
-    portfolio = models.CharField(max_length=255, blank=True)
-    linkedin = models.CharField(max_length=255, blank=True)
-    github = models.CharField(max_length=255, blank=True)
-    twitter = models.CharField(max_length=255, blank=True)
-    instagram = models.CharField(max_length=255, blank=True)
-    facebook = models.CharField(max_length=255, blank=True)
+    website = models.URLField(max_length=255, blank=True)
+    portfolio = models.URLField(max_length=255, blank=True)
+    linkedin = models.URLField(max_length=255, blank=True)
+    github = models.URLField(max_length=255, blank=True)
+    twitter = models.URLField(max_length=255, blank=True)
+    instagram = models.URLField(max_length=255, blank=True)
+    facebook = models.URLField(max_length=255, blank=True)
 
     resume_progress = models.PositiveSmallIntegerField(default=0)
 
@@ -30,7 +40,7 @@ class Template(models.Model):
         return self.template_name
 
 class Resume(models.Model):
-    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    user = models.OneToOneField('resume.User', on_delete=models.CASCADE)
 
 class ResumeTitle(models.Model):
     resume = models.ForeignKey(Resume, related_name='resume_titles', on_delete=models.CASCADE)
