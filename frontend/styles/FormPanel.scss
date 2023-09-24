@@ -1,0 +1,84 @@
+#main-sheet {
+    min-width: 500px;
+    max-width: 1200px;
+    min-height: 500px;
+    margin: auto;
+    align-self: center;
+    border-radius: 20px 10px 20px 10px;
+    box-shadow: 3px 3px 4px rgba(0, 0, 0, 0.5);
+    background-color: $paper;
+    padding: 3px;
+    transition: all 0.4s ease;
+  }
+
+$form-panel-radius-1: 18px;
+$form-panel-radius-2: 9px;
+
+#form-panel {
+    display: flex;
+    flex-direction: row;
+    justify-content: stretch;
+    background: $dark-grey;
+    border-radius: $form-panel-radius-1 $form-panel-radius-2 $form-panel-radius-1 $form-panel-radius-2;
+    width: 100%;
+    height: 100%;
+    #categories {
+        height: 100%;
+        min-width: 150px;
+        border-right: 2px solid $paper;
+        display: flex;
+        flex-direction: column;
+        justify-content: stretch;
+        align-items: stretch;
+        .category {
+            position: relative;
+            cursor: pointer;
+            flex-grow: 1;
+            padding: calc(0.8em + 4px) 0.8em 0.8em 0.8em;
+            color: $paper;
+            border-top: 1px solid $paper;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: flex-start;
+            font-family: 'Cutive Mono', monospace;
+
+            .category-text {
+                text-align: left;
+                display: block;
+                width: fit-content;
+            }
+
+            &:first-child {
+                border-top: none;
+                border-top-left-radius: $form-panel-radius-1 - 3px;
+            }
+            &:last-child {
+                border-bottom-left-radius: $form-panel-radius-2 - 2px;
+            }
+            &.selected {
+                background-color: $paper;
+                color: $ink;
+                &:hover {
+                     background-color: $darken;
+                }
+                .category-line {
+                    width: 100%;
+                }
+            }
+            &:hover {
+                background-color: $lighten;
+            }
+
+            .category-line {
+                display: block;
+                height: 4px;
+                width: 0%;
+                border-radius: 3px;
+                background: $middle;
+                transition: all 0.4s ease;
+
+            }
+        }
+    }
+}

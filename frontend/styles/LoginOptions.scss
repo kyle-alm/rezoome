@@ -1,0 +1,47 @@
+
+#login-options {
+    line-height: 2;
+    text-transform: lowercase;
+    font-family: 'Cutive Mono', monospace;
+    letter-spacing: .2em;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    font-size: 1.1rem;
+    font-weight: bold;
+    gap: 30px;
+    div {
+      position: relative;
+      isolation: isolate;
+      cursor: pointer;
+      height: 30px;
+      text-align: left;
+      text-wrap: nowrap;
+      &#login-btn::after {
+        content: "//Login";
+      }
+      &#signup-btn::after {
+        text-wrap: nowrap;
+        content: "//Sign_Up";
+        
+      }
+      &::after {
+        overflow: hidden;
+        display: block;
+        width: 0%;
+        height: 30px;
+        position: absolute;
+        top: 0;
+        left: 0;
+        background: $paper;
+        color: $ink;
+        transition: width 0.3s ease;
+      }
+      &:hover {
+        &::after {
+          width: 100%;
+  
+        }
+      }
+    }
+  }
