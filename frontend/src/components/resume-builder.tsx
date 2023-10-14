@@ -1,7 +1,9 @@
 import { useState } from "react";
-import Categories from "./categories";
+import Categories from "./resume_builder/categories";
+import DisplayCurrentList from "./resume_builder/display-current-list";
+import InputForm from "./resume_builder/input-form";
 
-export default function FormPanel() {
+export default function ResumeBuilder() {
 	const [selectedCategory, setSelectedCategory] = useState<Category | null>(
 		null
 	);
@@ -12,7 +14,10 @@ export default function FormPanel() {
 				selectedCategory={selectedCategory}
 				setSelectedCategory={setSelectedCategory}
 			/>
-			<div id="category-form-panel"></div>
+			<div id="category-form-panel">
+				<DisplayCurrentList category={selectedCategory} />
+				<InputForm category={selectedCategory} />
+			</div>
 		</div>
 	);
 }

@@ -1,18 +1,21 @@
 @import "./styles/ThemeColors.scss";
 @import "./styles/LoginOptions.scss";
 @import "./styles/FormPanel.scss";
+@import "./styles/common/_Common.scss";
+@import "./styles/InputForm.scss";
+@import "./styles/DisplayCurrentList.scss";
+
+* { box-sizing: border-box; }
 
 #root {
   margin: 0;
   text-align: center;
-  box-sizing: border-box;
 }
 
 #main-screen {
   height: 100vh;
   width: 100vw;
   margin: 0;
-  padding: 0;
   color: $paper;
   background-color: $dark-grey;
   display: flex;
@@ -26,8 +29,8 @@
 }
 
 #nav {
-  padding: 1rem;
-  height: 2rem;
+  padding: 1em;
+  height: 4em;
   color: $paper;
   display: flex;
   flex-direction: row;
@@ -48,7 +51,7 @@
     position: absolute;
     top: 0;
     left: 0px;
-    height: 140%;
+    height: 1em;
     width: 65%;
     overflow: hidden;
   }
@@ -56,7 +59,7 @@
     content: "";
     position: absolute;
     height: 4px;
-    bottom: -70%;
+    top: 1em;
     left: 0px;
     width: 100%;
     background-color: $theme-orange;

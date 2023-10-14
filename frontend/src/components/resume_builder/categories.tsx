@@ -1,5 +1,5 @@
 import { Dispatch, SetStateAction } from "react";
-import { Category } from "./form-panel";
+import { Category } from "../resume-builder";
 
 interface CategoriesProps {
 	selectedCategory: Category | null;

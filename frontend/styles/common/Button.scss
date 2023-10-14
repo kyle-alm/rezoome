@@ -1,0 +1,30 @@
+.custom-button {
+  position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 10px 20px;
+    font-size: 16px;
+    border: 1px solid $paper;
+    border-radius: 4px;
+    background-color: $theme-blue;
+    color: $paper;
+    cursor: pointer;
+    box-shadow: 4px 4px 4px #000000cc;
+    transition: all 0.2s;
+  
+    i {
+      margin-right: 8px; // Adjust the spacing between the icon and text
+    }
+  
+    &:hover {
+      background-color: $theme-blue-darker;
+      border: 1px solid $paper;
+    }
+
+    &.pressed {
+      top: 1px;
+      left: 1px;
+      box-shadow: 1px 1px 1px #000000ff, inset 0px 0px 20px #00000066;
+    }
+  }

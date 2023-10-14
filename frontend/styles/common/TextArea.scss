@@ -1,0 +1,25 @@
+.textarea-container {
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .custom-textarea {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    background: $dark-grey;
+    border: 1px solid $paper;
+    border-radius: 4px;
+    margin-bottom: 8px;
+    resize: vertical;
+
+    &:focus {
+        outline: 2px solid $paper;
+    }
+  }
+  
+  .char-count {
+    align-self: flex-end;
+    color: $paper;
+    font-size: 14px;
+  }

@@ -1,6 +1,6 @@
 import { Sheet } from "@mui/joy";
 import LoginOptions from "./login-options";
-import FormPanel from "./form-panel";
+import ResumeBuilder from "./resume-builder";
 
 export default function MainLayout() {
 	return (
@@ -10,7 +10,7 @@ export default function MainLayout() {
 				<LoginOptions />
 			</div>
 			<Sheet id="main-sheet">
-				<FormPanel />
+				<ResumeBuilder />
 			</Sheet>
 		</div>
 	);
