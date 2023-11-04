@@ -1,3 +1,3 @@
 export default function SkillsForm() {
-	return <div id="input-form"></div>;
+	return <div className="input-form" id="skills-form"></div>;
 }

@@ -73,48 +73,11 @@ class EducationSerializer(serializers.ModelSerializer):
         model = Education
         fields = ('__all__')
 
-class ProjectSerializer(serializers.ModelSerializer):
-    project_snippets = serializers.PrimaryKeyRelatedField(many=True, queryset=ProjectSnippet.objects.all())
-
-    class Meta:
-        model = Project
-        fields = ('__all__')
-
-class ProjectSnippetSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = ProjectSnippet
-        fields = ('__all__')
-
 class SkillSerializer(serializers.ModelSerializer):
     class Meta:
         model = Skill
         fields = ('__all__')
-
-class InterestSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Interest
-        fields = ('__all__')
-
-class AwardSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Award
-        fields = ('__all__')
-
-class LanguageSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Language
-        fields = ('__all__')
-
-class CertificationSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Certification
-        fields = ('__all__')
-
-class ReferenceSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Reference
-        fields = ('__all__')
-
+        
 class LayoutSerializer(serializers.ModelSerializer):
     class Meta:
         model = Layout

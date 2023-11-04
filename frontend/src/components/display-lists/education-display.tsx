@@ -1,3 +1,3 @@
 export default function EducationDisplay() {
-	return <div id="display-current-list"></div>;
+	return <div className="display-current-list" id="education-display"></div>;
 }

@@ -1,3 +1,3 @@
 export default function EducationForm() {
-	return <div id="input-form"></div>;
+	return <div className="input-form" id="education-form"></div>;
 }

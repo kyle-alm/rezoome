@@ -1,46 +1,64 @@
 import { Category } from "../resume-builder";
-import UserDisplay from "../display-lists/user-display";
-import MainDisplay from "../display-lists/main-display";
+import SummaryDisplay from "../display-lists/summary-display";
 import ExperienceDisplay from "../display-lists/experience-display";
 import EducationDisplay from "../display-lists/education-display";
-import ProjectsDisplay from "../display-lists/projects-disaplay";
 import SkillsDisplay from "../display-lists/skills-display";
-import InterestsDisplay from "../display-lists/interests-display";
-import AwardsDisplay from "../display-lists/awards-display";
-import LanguagesDisplay from "../display-lists/languages-display";
-import CertificationsDisplay from "../display-lists/certifications-display";
-import ReferencesDisplay from "../display-lists/references-display";
+import Resume from "../../models/Resume";
+import Summary from "../../models/Summary";
+import Experience from "../../models/Experience";
+import Education from "../../models/Education";
+import Skill from "../../models/Skill";
 
 interface DisplayCurrentListProps {
 	category: Category | null;
+	resume: Resume;
+	setResume: (resume: Resume) => void;
 }
 
 export default function DisplayCurrentList({
 	category,
+	resume,
+	setResume,
 }: DisplayCurrentListProps) {
 	switch (category) {
 		case Category.User:
-			return <UserDisplay />;
-		case Category.Main:
-			return <MainDisplay />;
+			return <div id="user-display" />;
+		case Category.Summary:
+			return (
+				<SummaryDisplay
+					summaries={resume.summaries}
+					setSummaries={(newSummaries: Summary[]) =>
+						setResume({ ...resume, summaries: newSummaries })
+					}
+				/>
+			);
 		case Category.Experience:
-			return <ExperienceDisplay />;
+			return (
+				<ExperienceDisplay
+					experiences={resume.experiences}
+					setExperiences={(newExperiences: Experience[]) =>
+						setResume({ ...resume, experiences: newExperiences })
+					}
+				/>
+			);
 		case Category.Education:
-			return <EducationDisplay />;
-		case Category.Projects:
-			return <ProjectsDisplay />;
+			return (
+				<EducationDisplay
+					educations={resume.educations}
+					setEducations={(newEducations: Education[]) =>
+						setResume({ ...resume, educations: newEducations })
+					}
+				/>
+			);
 		case Category.Skills:
-			return <SkillsDisplay />;
-		case Category.Interests:
-			return <InterestsDisplay />;
-		case Category.Awards:
-			return <AwardsDisplay />;
-		case Category.Languages:
-			return <LanguagesDisplay />;
-		case Category.Certifications:
-			return <CertificationsDisplay />;
-		case Category.References:
-			return <ReferencesDisplay />;
+			return (
+				<SkillsDisplay
+					skills={resume.skills}
+					setSkills={(newSkills: Skill[]) =>
+						setResume({ ...resume, skills: newSkills })
+					}
+				/>
+			);
 		default:
 			return <div id="display-current-list"></div>;
 	}

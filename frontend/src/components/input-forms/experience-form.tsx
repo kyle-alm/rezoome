@@ -1,3 +1,3 @@
 export default function ExperienceForm() {
-	return <div id="input-form"></div>;
+	return <div className="input-form" id="experience-form"></div>;
 }

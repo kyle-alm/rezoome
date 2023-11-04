@@ -1,8 +1,31 @@
-#input-form {
+.input-form {
     position: relative;
     width: 100%;
     padding: 10px;
     height: 50%;
     border-top: 2px solid $paper;
     overflow: hidden;
+    transition: all 1s ease;
+}
+
+.input-form-row {
+    position: relative;
+    display: flex;
+    flex-direction: row;
+    justify-content: stretch;
+    align-items: stretch;
+    width: 100%;
+    gap: 25px;
+    div {
+        flex-grow: 1;
+    }
+}
+
+.button-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 25px;
+    width: 100%;
+    align-items: stretch;
 }
